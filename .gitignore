@@ -4,6 +4,7 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+################ application
 # Ignore bundler config.
 /.bundle
 
@@ -17,5 +18,36 @@
 !/log/.keep
 !/tmp/.keep
 
-# Ignore Byebug command history file.
-.byebug_history
+# Ignore database configuration
+/config/database.yml
+# Ignore s3 configuration
+/config/s3.yml
+# Ignore secret token file
+.secret
+# Ignore public folder
+/public
+# Ignore .idea folder
+.idea/
+
+################ system files
+# Emacs autosave files
+*~
+*#
+.#*
+# Emacs projectile project indicators
+.projectile
+# Mac OSX file
+.DS_Store
+
+# Ignore pg_dump files
+*.dump
+dump.rdb
+
+# Ignore public and shared folder
+/public
+/config/puma.rb
+/shared
+
+# Ignore environment specific files
+/.env
+/.byebug_history
