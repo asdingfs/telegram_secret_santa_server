@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/contrib'
 
 require 'telegram/bot'
 configure :development, :test do

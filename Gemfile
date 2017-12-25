@@ -3,6 +3,7 @@ ruby '2.3.4'
 
 # for ALL environments
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'telegram-bot-ruby'
 
 group :development, :test do
