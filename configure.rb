@@ -1,3 +1,10 @@
+# configurations for development and tests
+configure :development, :test do
+  Dotenv.load
+  require 'sinatra/reloader'
+  register Sinatra::Reloader
+end
+
 # GLOBAL variables
 configure do
   set :telegram_bot_token, ENV["TELEGRAM_BOT_TOKEN"]
@@ -10,10 +17,5 @@ configure do
   file = File.new(File.join(settings.root, 'log/application.log'), 'a+')
   file.sync = true
   use Rack::CommonLogger, file
-end
-
-# configurations for development and tests
-configure :development, :test do
-  Dotenv.load
 end
 
