@@ -12,7 +12,7 @@ namespace "/api/:token" do
   end
   post '/updates'  do
     params.each do |key, value|
-      settings.logger.info "Received params key: #{key}, value: #{value}"
+      puts "Received params key: #{key}, value: #{value}"
     end
     halt 204
   end

@@ -22,7 +22,5 @@ configure do
   use Rack::CommonLogger, file
   # setup webhook
   settings.bot.api.set_webhook(url: "#{settings.telegram_bot_server}/api/#{settings.telegram_bot_token}/updates")
-  # TODO: handle updates in POST
-  # TODO: cleanup webhook after shutdown
 end
 
