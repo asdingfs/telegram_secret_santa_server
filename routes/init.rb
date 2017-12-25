@@ -10,4 +10,9 @@ namespace "/api/:token" do
   get '/' do
     "Hello! I'm GiftExchangeBot!"
   end
+  post '/updates'  do
+    params.each do |key, value|
+      settings.logger.info "Received params key: #{key}, value: #{value}"
+    end
+  end
 end
