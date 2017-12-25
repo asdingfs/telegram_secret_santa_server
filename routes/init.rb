@@ -14,5 +14,6 @@ namespace "/api/:token" do
     params.each do |key, value|
       settings.logger.info "Received params key: #{key}, value: #{value}"
     end
+    halt 204
   end
 end
