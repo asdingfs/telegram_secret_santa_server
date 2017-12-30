@@ -10,6 +10,7 @@ configure :development, :test do
   use Rack::CommonLogger, file
 end
 
+# configurations for production
 configure :production do
   $stdout.sync = true
 end
@@ -24,7 +25,6 @@ end
 
 # application-wide configurations
 configure do
-  # setup webhook
+  # set webhook, enable this if using webhook
   settings.bot.api.set_webhook(url: "#{settings.telegram_bot_server}/api/#{settings.telegram_bot_token}/updates")
 end
-
