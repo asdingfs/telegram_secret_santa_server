@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'sinatra/contrib'
-require 'sinatra/activerecord'
 require 'telegram/bot'
 
 configure :development, :test do
@@ -8,5 +7,8 @@ configure :development, :test do
   require 'dotenv'
 end
 
-# require init files
+# initialize
 require_relative 'config/init'
+
+# require after loading environment variables
+require 'sinatra/activerecord'
