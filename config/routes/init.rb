@@ -2,7 +2,7 @@ get '/' do
   "Hello World!"
 end
 
-namespace "/api/:token" do
+namespace "/api/:token", provides: :json do
   before do
     raise Sinatra::NotFound unless
       params[:token] == settings.telegram_bot_token
@@ -10,7 +10,7 @@ namespace "/api/:token" do
   get '/' do
     "Hello! I'm GiftExchangeBot!"
   end
-  post '/updates'  do
+  post '/update'  do
     params.each do |key, value|
       puts "Received params key: #{key}, value: #{value}"
     end
