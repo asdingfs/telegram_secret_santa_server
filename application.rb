@@ -15,6 +15,5 @@ require_relative 'config/init'
 require 'sinatra/activerecord'
 
 # require everything else
-['app', 'config/routes'].each do |app|
-  Dir[File.join(settings.root, app, '**', '*.rb')].each { |file| require file }
-end
+Dir[File.join(settings.root, 'app', '**', '*.rb')].
+  each { |file| require file }

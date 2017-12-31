@@ -16,4 +16,4 @@ namespace "/api/:token", provides: :json do
     end
     halt 204
   end
-end
+gend
