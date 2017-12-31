@@ -10,7 +10,6 @@ configure :development do
 end
 
 configure do # settings vars
-  set :root, File.expand_path(File.dirname(__FILE__))
   set :db_uri, URI.parse(ENV['DATABASE_URL'])
   # bot vars
   set :telegram_bot_token, ENV["TELEGRAM_BOT_TOKEN"]
@@ -23,9 +22,4 @@ configure :production do
   # set webhook, enable this if using webhook
   set :webhook_url, "#{settings.telegram_bot_server}/api/#{settings.telegram_bot_token}/updates"
   settings.bot.api.set_webhook(url: settings.webhook_url)
-end
-
-# require everything else
-['db', 'models', 'helpers', 'routes'].each do |app|
-  Dir[File.join(settings.root, app, '**', '*.rb')].each { |file| require file }
 end
