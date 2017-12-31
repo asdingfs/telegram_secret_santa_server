@@ -13,7 +13,7 @@ configure do # settings vars
   set :db_uri, URI.parse(ENV['DATABASE_URL'])
   # bot vars
   set :telegram_bot_token, ENV["TELEGRAM_BOT_TOKEN"]
-  set :telegram_bot_server, "https://telegram-gift-exchange-bot.herokuapp.com"
+  set :telegram_bot_server, ENV["TELEGRAM_BOT_SERVER"]
   set :bot, Telegram::Bot::Client.new(settings.telegram_bot_token)
 end
 
