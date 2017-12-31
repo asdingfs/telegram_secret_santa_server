@@ -4,13 +4,13 @@ module Updates
     
     def self.handle(request)
       update = JSON.parse(request.body.read.to_s, object_class: OpenStruct)
-      new(update).register
+      new(update).process
     end
     def initialize(update)
       @update = update
     end
     
-    def register
+    def process
       id = self.update.update_id
       ActiveRecord::Base.transaction do
         if Update.find_by_update_id(id).nil?
