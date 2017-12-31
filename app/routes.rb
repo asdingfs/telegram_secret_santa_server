@@ -1,3 +1,5 @@
+require_relative 'helpers'
+
 get '/' do
   "Hello World!"
 end
@@ -11,9 +13,11 @@ namespace "/api/:token", provides: :json do
     "Hello! I'm GiftExchangeBot!"
   end
   post '/update'  do
-    params.each do |key, value|
-      puts "Received params key: #{key}, value: #{value}"
+    begin
+      puts "Received Update object: #{UpdateHandler.handle!(request).inspect}"
+    rescue JSON::ParserError
+      status 400
+      body render_error_body(400, "Update object is invalid")
     end
-    halt 204
   end
-gend
+end
