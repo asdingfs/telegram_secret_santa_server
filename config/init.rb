@@ -1,5 +1,5 @@
 # pre-env for development and tests
-configure :development, :test do
+configure :development do
   Dotenv.load
   require 'sinatra/reloader'
   register Sinatra::Reloader
@@ -34,6 +34,3 @@ end
 ['db', 'models', 'helpers', 'routes'].each do |app|
   Dir[File.join(settings.root, app, '**', '*.rb')].each { |file| require file }
 end
-
-
-

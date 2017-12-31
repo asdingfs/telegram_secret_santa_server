@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'sinatra/contrib'
-require 'sinatra/sequel'
+require 'sinatra/activerecord'
 require 'telegram/bot'
 
 configure :development, :test do
@@ -9,4 +9,4 @@ configure :development, :test do
 end
 
 # require init files
-require_relative 'configure'
+require_relative 'config/init'
