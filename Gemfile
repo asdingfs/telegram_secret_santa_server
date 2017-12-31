@@ -6,10 +6,10 @@ ruby '2.3.4'
 gem 'sinatra'
 gem 'sinatra-contrib'
 # database
-gem 'sinatra-sequel'
+gem 'sinatra-activerecord'
 gem 'pg'
-
-# helper for bots
+# other gems
+gem 'rake'
 gem 'telegram-bot-ruby'
 
 group :development, :test do
