@@ -1,5 +1,4 @@
-# configurations for development and tests
-configure :development, :test do
+configure :development do
   Dotenv.load
   require 'sinatra/reloader'
   register Sinatra::Reloader
@@ -10,21 +9,17 @@ configure :development, :test do
   use Rack::CommonLogger, file
 end
 
-configure :production do
-  $stdout.sync = true
-end
-
-# GLOBAL variables
-configure do
+configure do # settings vars
+  set :db_uri, URI.parse(ENV['DATABASE_URL'])
+  # bot vars
   set :telegram_bot_token, ENV["TELEGRAM_BOT_TOKEN"]
   set :telegram_bot_server, "https://telegram-gift-exchange-bot.herokuapp.com"
   set :bot, Telegram::Bot::Client.new(settings.telegram_bot_token)
-  set :root, File.dirname(__FILE__)
 end
 
-# application-wide configurations
-configure do
-  # setup webhook
-  settings.bot.api.set_webhook(url: "#{settings.telegram_bot_server}/api/#{settings.telegram_bot_token}/updates")
+configure :production do
+  $stdout.sync = true
+  # set webhook, enable this if using webhook
+  set :webhook_url, "#{settings.telegram_bot_server}/api/#{settings.telegram_bot_token}/updates"
+  settings.bot.api.set_webhook(url: settings.webhook_url)
 end
-
