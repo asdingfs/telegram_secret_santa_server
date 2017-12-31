@@ -9,8 +9,4 @@ configure :development, :test do
 end
 
 # require init files
-require_relative 'db/init'
 require_relative 'configure'
-require_relative 'models/init'
-require_relative 'helpers/init'
-require_relative 'routes/init'
