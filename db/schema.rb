@@ -23,8 +23,11 @@ ActiveRecord::Schema.define(version: 20171231045409) do
 
   create_table "participants", force: :cascade do |t|
     t.bigint "exchange_id"
+    t.integer "user_id"
     t.text "profile"
+    t.boolean "is_set"
     t.index ["exchange_id"], name: "index_participants_on_exchange_id"
+    t.index ["user_id"], name: "index_participants_on_user_id", unique: true
   end
 
   create_table "updates", force: :cascade do |t|
