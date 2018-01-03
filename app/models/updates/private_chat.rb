@@ -15,49 +15,52 @@ module Updates
 
     ####################### methods
     def parse_active
-      parser.multiple_commands? ?
-        parse_multiple_commands :
+      case
+      when parser.multiple_commands?; parse_multiple_commands
+      when parser.no_command?; parse_no_command
+      else
         parser.commands.each do |command|
-        case command
-        when '/help'
-          message_set? ?
-            send_message("Yayy!! " + Participant.message_set_prompt) :
-            send_message(Participant.long_help_prompt)
-        when '/edit'
-          message_set? ?
-            send_message("Sorry! " + Participant.message_set_prompt) :
-            edit_message(parser.non_commands)
-        when '/set'
-          set_message
-        else
-          message_set? ?
-            send_message(Participant.message_set_prompt) :
-            parse_no_commands
+          case command
+          when '/help'
+            message_set? ?
+              send_message("Yayy!! " + Participant.message_set_prompt) :
+              send_message(Participant.long_help_prompt)
+          when '/edit'
+            message_set? ?
+              send_message("Sorry! " + Participant.message_set_prompt) :
+              edit_message(parser.non_commands)
+          when '/set'
+            set_message
+          else
+            message_set? ?
+              send_message(Participant.message_set_prompt) :
+              parse_no_command
+          end
         end
-        return
       end
-      parse_no_commands
     end
     def parse_inactive
-      parser.multiple_commands? ?
-        parse_multiple_commands :
+      case
+      when parser.multiple_commands? || parser.no_command?
+        send_message(Participant.not_registered_prompt)
+      else
         parser.commands.each do |command|
-        case command
-        when '/start'
-          send_message(Exchange.wrong_chat_prompt)
-        else
-          send_message(Participant.not_registered_prompt)
+          case command
+          when '/start'
+            send_message(Exchange.wrong_chat_prompt)
+          else
+            send_message(Participant.not_registered_prompt)
+          end
+          return
         end
-        return
       end
-      send_message(Participant.not_registered_prompt)
     end
     def parse_multiple_commands
       message = "Please send each commands one at a time. "\
         "I cannot parse all of them at once >.<. Please type /help if you need any assistance :)"
       send_message(message)
     end
-    def parse_no_commands
+    def parse_no_command
       message = "I'm very sorry that I am unable to recognize any valid commands. "\
         "Here's some /help for you:\n\n" +
         Participant.short_help_prompt

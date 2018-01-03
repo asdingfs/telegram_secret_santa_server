@@ -24,6 +24,9 @@ module Parser
     def multiple_commands?
       commands.count > 1
     end
+    def no_command?
+      commands.count == 0
+    end
 
     private
 
