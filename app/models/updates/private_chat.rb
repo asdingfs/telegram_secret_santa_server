@@ -39,7 +39,7 @@ module Updates
       parse_no_commands
     end
     def parse_inactive
-      parser.multiple_commands ?
+      parser.multiple_commands? ?
         parse_multiple_commands :
         parser.commands.each do |command|
         case command
@@ -91,7 +91,7 @@ module Updates
       @participant ||= Participant.find_by_user_id(self.update.message.from.id)
     end
     def parser
-      @parser ||= Parser::BotCommand.new(self.message)
+      @parser ||= Parser::BotCommand.new(self.update.message)
     end
   end
 end
