@@ -1,16 +1,14 @@
-module Updates
-  class PrivateChat
-    attr_reader :update
+require_relative 'chat'
 
-    # if does not exist, does not return any message. If exists, taken as preference
+module Updates
+  class PrivateChat < Chat
+    attr_reader :participant
+    
     def self.register(update)
       chat = new(update)
       chat.active_participant? ?
         chat.parse_active :
         chat.parse_inactive
-    end
-    def initialize(update)
-      @update = update
     end
 
     ####################### methods
@@ -23,7 +21,7 @@ module Updates
           case command
           when '/help'
             message_set? ?
-              send_message("Yayy!! " + Participant.message_set_prompt) :
+              send_message("Hurray!! " + Participant.message_set_prompt) :
               send_message(Participant.long_help_prompt)
           when '/edit'
             message_set? ?
@@ -55,17 +53,6 @@ module Updates
         end
       end
     end
-    def parse_multiple_commands
-      message = "Please send each commands one at a time. "\
-        "I cannot parse all of them at once >.<. Please type /help if you need any assistance :)"
-      send_message(message)
-    end
-    def parse_no_command
-      message = "I'm very sorry that I am unable to recognize any valid commands. "\
-        "Here's some /help for you:\n\n" +
-        Participant.short_help_prompt
-      send_message(message)
-    end
 
     #### helpers
     def active_participant?
@@ -73,10 +60,6 @@ module Updates
     end
     def message_set?
       participant && participant.is_set?
-    end
-    def send_message(text)
-      Sinatra::Application.settings.
-        bot.api.send_message(chat_id: self.update.message.chat.id, text: text)
     end
     def edit_message(text)
       participant.update(profile: text)
@@ -86,15 +69,15 @@ module Updates
     end
     def set_message
       participant.update(set: true)
-      send_message("Yayy! " + Participant.message_set_prompt)
+      send_message("Hurray!! " + Participant.message_set_prompt)
       # TODO: shuffle and send preferences is done
     end
+
+    private
+    
     #### data
     def participant
-      @participant ||= Participant.find_by_user_id(self.update.message.from.id)
-    end
-    def parser
-      @parser ||= Parser::BotCommand.new(self.update.message)
+      @participant ||= Participant.find_by_user_id(message.from.id)
     end
   end
 end
