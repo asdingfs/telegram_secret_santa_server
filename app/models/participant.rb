@@ -1,8 +1,9 @@
 class Participant < ActiveRecord::Base
   belongs_to :exchange
 
-  validates_uniqueness_of :user_id, :user_name
-  validates_inclusion_of :is_set, in: [true, false]
+  validates :user_id, presence: true, uniqueness: true
+  validates :user_name, presence: true
+  validates :set, inclusion: { in: [true, false] }
 
   def self.not_registered_prompt
     "Sorry, you are currently not participating in any exchanges. " +
