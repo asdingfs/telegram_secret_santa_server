@@ -72,6 +72,9 @@ module Updates
       send_message("Hurray!! " + Participant.message_set_prompt)
       # TODO: shuffle and send preferences is done
     end
+    def help_prompt
+      Participant.short_help_prompt
+    end
 
     private
     

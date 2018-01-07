@@ -16,13 +16,18 @@ module Updates
     end
     
     def parse_no_command
-      send_message("I'm very sorry that I am unable to recognize any valid commands. "\
-                   "Here's some /help for you:\n\n" +
-                   Participant.short_help_prompt)
+      msg = "I'm very sorry that I am unable to recognize any valid commands. "
+      msg += "Here's some /help for you:\n\n" + help_prompt unless help_prompt.blank?
+      send_message(msg)
     end
     def parse_multiple_commands
       send_message("Please send each commands one at a time. "\
                    "Sorry, I cannot parse all of them at once. Please type /help if you need any assistance :)")
+    end
+
+    def help_prompt
+      # INTERFACE: to implement
+      ""
     end
     
     def parser
