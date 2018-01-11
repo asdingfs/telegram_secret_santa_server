@@ -6,51 +6,53 @@ module Updates
     
     def self.register(update)
       chat = new(update)
-      chat.active_participant? ?
-        chat.parse_active :
-        chat.parse_inactive
+      chat.parse
+    end
+    def parse
+      case
+      when parser.multiple_commands?; parse_multiple_commands
+      when parser.no_command?; parse_no_command
+      else; parse_command
+      end
+    end
+    def parse_command
+      if active_participant?
+        parse_active
+      else
+        parse_inactive
+      end
     end
 
     ####################### methods
     def parse_active
-      case
-      when parser.multiple_commands?; parse_multiple_commands
-      when parser.no_command?; parse_no_command
-      else
-        parser.commands.each do |command|
-          case command
-          when '/help'
-            message_set? ?
-              send_message("Hurray!! " + Participant.message_set_prompt) :
-              send_message(Participant.long_help_prompt)
-          when '/edit'
-            message_set? ?
-              send_message("Sorry! " + Participant.message_set_prompt) :
-              edit_message(parser.non_commands)
-          when '/set'
-            set_message
-          else
-            message_set? ?
-              send_message(Participant.message_set_prompt) :
-              parse_no_command
-          end
+      parser.commands.each do |command|
+        case command
+        when '/help'
+          message_set? ?
+            send_message("Hurray!! " + Participant.message_set_prompt) :
+            send_message(Participant.long_help_prompt)
+        when '/edit'
+          message_set? ?
+            send_message("Sorry! " + Participant.message_set_prompt) :
+            edit_message(parser.non_commands)
+        when '/set'
+          set_message
+        else
+          message_set? ?
+            send_message(Participant.message_set_prompt) :
+            parse_no_command
         end
       end
     end
     def parse_inactive
-      case
-      when parser.multiple_commands? || parser.no_command?
-        send_message(Participant.not_registered_prompt)
-      else
-        parser.commands.each do |command|
-          case command
-          when '/start'
-            send_message(Exchange.wrong_chat_prompt)
-          else
-            send_message(Participant.not_registered_prompt)
-          end
-          return
+      parser.commands.each do |command|
+        case command
+        when '/start'
+          # TODO:
+        else
+          send_message(Participant.not_registered_prompt)
         end
+        return
       end
     end
 
