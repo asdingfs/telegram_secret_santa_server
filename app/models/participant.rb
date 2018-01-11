@@ -1,10 +1,11 @@
 class Participant < ActiveRecord::Base
-  belongs_to :exchange
+  belongs_to :exchange, inverse_of: :participants
 
   validates :user_id, presence: true, uniqueness: true
   validates :user_name, presence: true
   validates :set, inclusion: { in: [true, false] }
 
+  # scopes
   scope :with_chat_id, -> do
     participants = Participant.arel_table
     registrations = Registration.arel_table
@@ -13,7 +14,17 @@ class Participant < ActiveRecord::Base
       join_sources
     joins(condition).select(participants[Arel.star], registrations[:chat_id].as('chat_id'))
   end
+  scope :id_map, -> do
+    all.map { |o| [o.id, o] }.to_h
+  end
 
+  # prompts
+  def giftee_prompt
+    "You will be buying gifts for:\n\n" +
+      "#{self.user_name}\n\n" +
+      "Hobbies, interests, wish list, or anything about his/herself:\n\n" +
+      "#{(self.profile || '-')}"
+  end
   def self.not_registered_prompt
     "Sorry, you are currently not participating in any exchanges. " +
       Exchange.wrong_chat_prompt
@@ -47,7 +58,7 @@ class Participant < ActiveRecord::Base
   def self.start_prompt
     "Before I send you the name of people who you would give a gift to, "\
       "please describe your hobbies, interests, wish list, or anything about yourself "\
-      "that would help your gifter decide on an appropriate gift for you :)\n\n" +
+      "that would help your gifter decide on an appropriate gift for you :)\n\n"\
       "Here are some of usable commands:\n\n" +
       long_help_prompt
   end

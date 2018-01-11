@@ -70,7 +70,7 @@ module Updates
     def set_message
       participant.update!(set: true)
       reply_message("Hurray!! " + Participant.message_set_prompt)
-      # TODO: shuffle and send preferences is done
+      exchange.conclude if exchange.finished?
     end
     def register_participant
       registration = Registration.
@@ -88,6 +88,9 @@ module Updates
     #### data
     def participant
       @participant ||= Participant.find_by_user_id(message.from.id)
+    end
+    def exchange
+      @exchange ||= (participant && participant.exchange)
     end
   end
 end

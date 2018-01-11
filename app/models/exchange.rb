@@ -1,9 +1,30 @@
 class Exchange < ActiveRecord::Base
-  has_many :participants, -> { with_chat_id }
+  has_many :participants, -> { with_chat_id },
+    dependent: :destroy, inverse_of: :exchange
 
   validates :chat_id, presence: true, uniqueness: true
   validates :chat_title, presence: true
   validates :set, inclusion: { in: [true, false], }
+  
+  def conclude
+    shuffle_hash.each do |gifter, giftee|
+      send_message(gifter.chat_id, giftee.giftee_prompt)
+    end
+    self.destroy
+  end
+  def shuffle_hash
+    participant_hash = self.participants.id_map
+    participant_hash.keys.shuffle.each_with_index.map do |id, i|
+      next_id = participant_ids[i + 1] || participant_ids[0]
+      [id, next_id]
+    end.map do |k, v|
+      [participant_hash[k], participant_hash[v]] # { id => #participant }
+    end.to_h
+  end
+  def finished?
+    self.is_set? &&
+      self.participants.where(set: false).empty?
+  end
 
   # prompts
   def self.idle_prompt
