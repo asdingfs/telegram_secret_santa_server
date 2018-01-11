@@ -5,7 +5,7 @@ class CreateParticipants < ActiveRecord::Migration[5.1]
       t.integer     :user_id
       t.string      :user_name
       t.text        :profile
-      t.boolean     :set
+      t.boolean     :set, default: false
     end
 
     add_index :participants, :user_id, unique: true

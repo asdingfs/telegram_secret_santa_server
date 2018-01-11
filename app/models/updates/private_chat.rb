@@ -1,100 +1,96 @@
-module Updates
-  class PrivateChat
-    attr_reader :update
+require_relative 'chat'
 
-    # if does not exist, does not return any message. If exists, taken as preference
+module Updates
+  class PrivateChat < Chat
+    attr_reader :participant
+    
     def self.register(update)
       chat = new(update)
-      chat.active_participant? ?
-        chat.parse_active :
-        chat.parse_inactive
+      chat.parse
     end
-    def initialize(update)
-      @update = update
+    def parse
+      case
+      when parser.multiple_commands?;   parse_multiple_commands
+      when parser.no_command?;          parse_no_command
+      else;                             parse_command
+      end
+    end
+    def parse_command
+      case
+      when set_message?;                parse_set
+      when participant;                 parse_active
+      else;                             parse_inactive
+      end
     end
 
     ####################### methods
+    def parse_set
+      parser.commands.each do |command|
+        reply_message("Sorry! " + Participant.message_set_prompt) # TODO: improve prompt
+      end
+    end
     def parse_active
-      case
-      when parser.multiple_commands?; parse_multiple_commands
-      when parser.no_command?; parse_no_command
-      else
-        parser.commands.each do |command|
-          case command
-          when '/help'
-            message_set? ?
-              send_message("Yayy!! " + Participant.message_set_prompt) :
-              send_message(Participant.long_help_prompt)
-          when '/edit'
-            message_set? ?
-              send_message("Sorry! " + Participant.message_set_prompt) :
-              edit_message(parser.non_commands)
-          when '/set'
-            set_message
-          else
-            message_set? ?
-              send_message(Participant.message_set_prompt) :
-              parse_no_command
-          end
+      parser.commands.each do |command|
+        case command
+        when '/help'
+          reply_message(Participant.long_help_prompt)
+        when '/edit'
+          edit_message(parser.non_commands)
+        when '/set'
+          set_message
+        else
+          parse_no_command
         end
       end
     end
     def parse_inactive
-      case
-      when parser.multiple_commands? || parser.no_command?
-        send_message(Participant.not_registered_prompt)
-      else
-        parser.commands.each do |command|
-          case command
-          when '/start'
-            send_message(Exchange.wrong_chat_prompt)
-          else
-            send_message(Participant.not_registered_prompt)
-          end
-          return
+      parser.commands.each do |command|
+        case command
+        when '/register'
+          register_participant
+        else
+          reply_message(Participant.not_registered_prompt)
         end
       end
-    end
-    def parse_multiple_commands
-      message = "Please send each commands one at a time. "\
-        "I cannot parse all of them at once >.<. Please type /help if you need any assistance :)"
-      send_message(message)
-    end
-    def parse_no_command
-      message = "I'm very sorry that I am unable to recognize any valid commands. "\
-        "Here's some /help for you:\n\n" +
-        Participant.short_help_prompt
-      send_message(message)
     end
 
     #### helpers
     def active_participant?
       !participant.nil?
     end
-    def message_set?
+    def set_message?
       participant && participant.is_set?
-    end
-    def send_message(text)
-      Sinatra::Application.settings.
-        bot.api.send_message(chat_id: self.update.message.chat.id, text: text)
     end
     def edit_message(text)
       participant.update(profile: text)
       edited_message = "You have successfully edited your personal description to:\n\n" +
         participant.profile
-      send_message(edited_message)
+      reply_message(edited_message)
     end
     def set_message
-      participant.update(set: true)
-      send_message("Yayy! " + Participant.message_set_prompt)
-      # TODO: shuffle and send preferences is done
+      participant.update!(set: true)
+      reply_message("Hurray!! " + Participant.message_set_prompt)
+      exchange.conclude if exchange.finished?
     end
+    def register_participant
+      registration = Registration.
+        where(user_id: message.from.id).
+        first_or_initialize
+      registration.update!(chat_id: message.chat.id)
+      # TODO: improve prompt
+    end
+    def help_prompt
+      Participant.short_help_prompt
+    end
+
+    private
+    
     #### data
     def participant
-      @participant ||= Participant.find_by_user_id(self.update.message.from.id)
+      @participant ||= Participant.find_by_user_id(message.from.id)
     end
-    def parser
-      @parser ||= Parser::BotCommand.new(self.update.message)
+    def exchange
+      @exchange ||= (participant && participant.exchange)
     end
   end
 end
