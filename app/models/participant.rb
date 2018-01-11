@@ -18,6 +18,11 @@ class Participant < ActiveRecord::Base
     all.map { |o| [o.id, o] }.to_h
   end
 
+  # helpers
+  def is_set?
+    self.set
+  end
+
   # prompts
   def giftee_prompt
     "You will be buying gifts for:\n\n" +

@@ -4,7 +4,7 @@ class Exchange < ActiveRecord::Base
 
   validates :chat_id, presence: true, uniqueness: true
   validates :chat_title, presence: true
-  validates :set, inclusion: { in: [true, false], }
+  validates :set, inclusion: { in: [true, false] }
   
   def conclude
     shuffle_hash.each do |gifter, giftee|
@@ -24,6 +24,9 @@ class Exchange < ActiveRecord::Base
   def finished?
     self.is_set? &&
       self.participants.where(set: false).empty?
+  end
+  def is_set?
+    self.set
   end
 
   # prompts
