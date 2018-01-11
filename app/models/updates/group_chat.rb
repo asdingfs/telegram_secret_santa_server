@@ -28,7 +28,7 @@ module Updates
       parser.commands.each do |command|
         case command
         when '/help'
-          reply_message(Exchange.started_help_prompt)
+          reply_message(exchange.started_help_prompt)
         when '/join'
           join_exchange
         when '/set'
@@ -88,7 +88,7 @@ module Updates
                   user_name: [message.from.first_name,
                               message.from.last_name].join(" "),
                   set: false)
-        # TODO: improve prompt, that you have been successfully registered, and list of participants
+        reply_message(exchange.participants_list_prompt)
       else
         # TODO: improve prompt, to register for participants
       end

@@ -41,15 +41,21 @@ class Exchange < ActiveRecord::Base
       started_help_prompt
   end
   def self.started_help_prompt
-    "Exchange status:\nSTARTED (Gathering participants)\n"\
-      "Participants:\n#{(participants_list || 'None.')}\n\n"\
+    "Exchange status:\nSTARTED (Gathering participants)\n\n"\
       "Commands:\n\n"\
       "/help - display a more descriptive command list (this list of commands)\n"\
       "/join - user who type this while Exchange is started would be included in the exchange list\n"\
       "/set - locks the joined user,\n"\
       "/cancel - cancel the exchange"
   end
-  def self.participants_list
+  def started_help_prompt
+    self.class.started_help_prompt +
+      "#{participants_list_prompt}\n\n"\
+  end
+  def participants_list_prompt
+    "Participants:\n#{(participants_list || 'None')}"
+  end
+  def participants_list
     i = 0
     participants.map do |participant|
       i += 1
