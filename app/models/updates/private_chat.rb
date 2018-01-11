@@ -49,7 +49,7 @@ module Updates
         when '/register'
           register_participant
         else
-          reply_message(Participant.not_registered_prompt)
+          reply_message(Participant.inactive_exchange_prompt)
         end
       end
     end

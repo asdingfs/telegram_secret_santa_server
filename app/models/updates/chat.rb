@@ -6,12 +6,12 @@ module Updates
       # INTERFACE: to implement
     end
     
-    def reply_message(text)
+    def reply_message(text, **kwargs)
       send_message(message.chat.id, text)
     end
-    def send_message(chat_id, text)
+    def send_message(chat_id, text, **kwargs)
       Sinatra::Application.settings.bot.api.
-        send_message(chat_id: chat_id, text: text)
+        send_message(chat_id: chat_id, text: text, **kwargs)
     end
 
     def message

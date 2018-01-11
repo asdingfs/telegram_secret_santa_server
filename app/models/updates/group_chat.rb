@@ -90,7 +90,7 @@ module Updates
                   set: false)
         reply_message(exchange.participants_list_prompt)
       else
-        # TODO: improve prompt, to register for participants
+        reply_message("#{Participant.not_registered_prompt(message.from.username)}", reply_to_message_id: message.message_id)
       end
     end
     def set_exchange
