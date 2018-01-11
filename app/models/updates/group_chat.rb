@@ -28,7 +28,7 @@ module Updates
       parser.commands.each do |command|
         case command
         when '/help'
-          # TODO: improve prompt
+          reply_message(Exchange.started_help_prompt)
         when '/join'
           join_exchange
         when '/set'

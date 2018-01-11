@@ -35,16 +35,25 @@ class Exchange < ActiveRecord::Base
     "To start an exchange, please add me into a Telegram group, and type /start"
   end
   def self.start_prompt
-    "Let's list down the participants for this exchange now. "\
-      "Please type /join to join this exchange.\n\n"\
-      "Here are some usable commands:\n\n" +
+    "Woohoo! You've started an exchange!\n"\
+      "Let's list down the participants for this exchange now.\n"\
+      "Please type /join to participate in this exchange.\n\n" +
       started_help_prompt
   end
   def self.started_help_prompt
-    "Commands:\n\n"\
-      "/help          - display a more descriptive command list (this list of commands)\n"\
-      "/join          - user who type this while Exchange is started would be included in the exchange list\n"\
-      "/set           - locks the joined user, "\
-      "/cancel        - cancel the exchange"
+    "Exchange status:\nSTARTED (Gathering participants)\n"\
+      "Participants:\n#{(participants_list || 'None.')}\n\n"\
+      "Commands:\n\n"\
+      "/help - display a more descriptive command list (this list of commands)\n"\
+      "/join - user who type this while Exchange is started would be included in the exchange list\n"\
+      "/set - locks the joined user,\n"\
+      "/cancel - cancel the exchange"
+  end
+  def self.participants_list
+    i = 0
+    participants.map do |participant|
+      i += 1
+      "#{i}. #{participant.user_name}"
+    end.join("\n")
   end
 end
