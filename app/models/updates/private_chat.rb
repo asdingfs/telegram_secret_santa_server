@@ -77,7 +77,7 @@ module Updates
         where(user_id: message.from.id).
         first_or_initialize
       registration.update!(chat_id: message.chat.id)
-      # TODO: improve prompt
+      reply_message(Participant.register_prompt)
     end
     def help_prompt
       Participant.short_help_prompt

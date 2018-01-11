@@ -55,6 +55,10 @@ class Participant < ActiveRecord::Base
       "Names will be distributed once everyone in same exchange have /set their personal descriptions\n"\
       "/edit <msg>    - edit and replace personal description to <msg>"
   end
+  def self.register_prompt
+    "Hi! I'm @GiftExchangeBot. Thank you very much for using me.\n\n" +
+      Exchange.wrong_chat_prompt
+  end
   def self.start_prompt
     "Before I send you the name of people who you would give a gift to, "\
       "please describe your hobbies, interests, wish list, or anything about yourself "\
