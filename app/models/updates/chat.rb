@@ -6,9 +6,12 @@ module Updates
       # INTERFACE: to implement
     end
     
-    def send_message(text)
+    def reply_message(text)
+      send_message(message.chat.id, text)
+    end
+    def send_message(chat_id, text)
       Sinatra::Application.settings.bot.api.
-        send_message(chat_id: message.chat.id, text: text)
+        send_message(chat_id: chat_id, text: text)
     end
 
     def message
@@ -18,11 +21,11 @@ module Updates
     def parse_no_command
       msg = "I'm very sorry that I am unable to recognize any valid commands. "
       msg += "Here's some /help for you:\n\n" + help_prompt unless help_prompt.blank?
-      send_message(msg)
+      reply_message(msg)
     end
     def parse_multiple_commands
-      send_message("Please send each commands one at a time. "\
-                   "Sorry, I cannot parse all of them at once. Please type /help if you need any assistance :)")
+      reply_message("Please send each commands one at a time. "\
+                    "Sorry, I cannot parse all of them at once. Please type /help if you need any assistance :)")
     end
 
     def help_prompt

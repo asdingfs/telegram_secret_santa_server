@@ -18,7 +18,7 @@ module Updates
     def parse_command
       case
       when set_message?;                parse_set
-      when active_participant?;         parse_active
+      when participant;                 parse_active
       else;                             parse_inactive
       end
     end
@@ -26,14 +26,14 @@ module Updates
     ####################### methods
     def parse_set
       parser.commands.each do |command|
-        send_message("Sorry! " + Participant.message_set_prompt) # TODO: improve prompt
+        reply_message("Sorry! " + Participant.message_set_prompt) # TODO: improve prompt
       end
     end
     def parse_active
       parser.commands.each do |command|
         case command
         when '/help'
-          send_message(Participant.long_help_prompt)
+          reply_message(Participant.long_help_prompt)
         when '/edit'
           edit_message(parser.non_commands)
         when '/set'
@@ -49,7 +49,7 @@ module Updates
         when '/register'
           register_participant
         else
-          send_message(Participant.not_registered_prompt)
+          reply_message(Participant.not_registered_prompt)
         end
       end
     end
@@ -65,11 +65,11 @@ module Updates
       participant.update(profile: text)
       edited_message = "You have successfully edited your personal description to:\n\n" +
         participant.profile
-      send_message(edited_message)
+      reply_message(edited_message)
     end
     def set_message
       participant.update!(set: true)
-      send_message("Hurray!! " + Participant.message_set_prompt)
+      reply_message("Hurray!! " + Participant.message_set_prompt)
       # TODO: shuffle and send preferences is done
     end
     def register_participant
