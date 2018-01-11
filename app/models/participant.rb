@@ -5,6 +5,15 @@ class Participant < ActiveRecord::Base
   validates :user_name, presence: true
   validates :set, inclusion: { in: [true, false] }
 
+  scope :with_chat_id, -> do
+    participants = Participant.arel_table
+    registrations = Registration.arel_table
+    condition = participants.outer_join(registrations).
+      on(participants[:user_id].eq(registrations[:user_id])).
+      join_sources
+    joins(condition).select(participants[Arel.star], registrations[:chat_id].as('chat_id'))
+  end
+
   def self.not_registered_prompt
     "Sorry, you are currently not participating in any exchanges. " +
       Exchange.wrong_chat_prompt

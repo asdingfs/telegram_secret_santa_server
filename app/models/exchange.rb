@@ -1,10 +1,11 @@
 class Exchange < ActiveRecord::Base
-  has_many :participants
+  has_many :participants, -> { with_chat_id }
 
   validates :chat_id, presence: true, uniqueness: true
   validates :chat_title, presence: true
   validates :set, inclusion: { in: [true, false], }
 
+  # prompts
   def self.idle_prompt
     "Hi, I'm GiftExchangeBot\n"\
       "To begin shuffling names for gift exhange, please type /start "

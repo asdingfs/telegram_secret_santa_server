@@ -95,18 +95,11 @@ module Updates
     end
     def set_exchange
       exchange.update!(set: true)
-      send_start_messages_to_participants # TODO: refactor this later
-      # TODO: improve prompt, reply to the group what should happen after setting exchanges
-    end
-    def send_start_messages_to_participants
-      registrations = Registration.
-        where(user_id: exchange.participants.pluck(:id)).
-        pluck(:user_id, :chat_id).
-        to_h
-      exchange.participants.each do |participant|
-        chat_id = registrations[participant.user_id]
-        send_message(chat_id, Participant.start_prompt)
+      # send start message to participants
+      exchange.participants.with_chat_id.each do |participant|
+        send_message(participant.chat_id, Participant.start_prompt)
       end
+      # TODO: improve prompt, reply to the group what should happen after setting exchanges
     end
   end
 end
