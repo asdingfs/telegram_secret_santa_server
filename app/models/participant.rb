@@ -33,9 +33,10 @@ class Participant < ActiveRecord::Base
   def self.not_registered_prompt(addressee=nil)
     addressee = nil if addressee.nil? || addressee.empty?
     greetings = ["Hi", addressee].compact.join(" ")
-    "#{greetings}, please go to @GiftExchangeBot and type /register, "\
+    "#{greetings},\n"\
+      "please go to @GiftExchangeBot and type /register, "\
       "so I can PM you your giftee later.\n"\
-      "You may not join any exchange until you /register"
+      "You may not join any exchange until you do so"
   end
   def self.inactive_exchange_prompt
     "Sorry, you are currently not participating in any exchanges. " +

@@ -56,7 +56,7 @@ module Updates
       exchange && exchange.is_set?
     end
     def started_exchange?
-      exhange && !exchange.is_set?
+      exchange && !exchange.is_set?
     end
     def registered?
       !!registration
@@ -82,15 +82,17 @@ module Updates
       reply_message(Exchange.start_prompt)
     end
     def join_exchange
+      full_name = [message.from.first_name,
+                   message.from.last_name].join(" ")
       if registered?
-        exhange.participants.
+        exchange.participants.
           create!(user_id: message.from.id,
-                  user_name: [message.from.first_name,
-                              message.from.last_name].join(" "),
+                  user_name: full_name,
                   set: false)
         reply_message(exchange.participants_list_prompt)
       else
-        reply_message("#{Participant.not_registered_prompt(message.from.username)}", reply_to_message_id: message.message_id)
+        reply_message(Participant.not_registered_prompt(full_name + "tg:///user?id=#{message.from.id}"),
+                      reply_to_message_id: message.message_id)
       end
     end
     def set_exchange

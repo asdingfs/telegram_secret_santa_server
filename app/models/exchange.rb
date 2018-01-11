@@ -32,7 +32,7 @@ class Exchange < ActiveRecord::Base
   # prompts
   def self.idle_prompt
     "Hi, I'm GiftExchangeBot\n"\
-      "To begin shuffling names for gift exhange, please type /start "
+      "To begin shuffling names for gift exchange, please type /start "
   end
   def self.wrong_chat_prompt
     "To start an exchange, please add me into a Telegram group, and type /start"
