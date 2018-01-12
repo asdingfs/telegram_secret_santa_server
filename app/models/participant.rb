@@ -6,6 +6,8 @@ class Participant < ActiveRecord::Base
   validates :set, inclusion: { in: [true, false] }
 
   # scopes
+  scope :set, -> { where(set: true) }
+  scope :unset, -> { where(set: false) }
   scope :with_chat_id, -> do
     participants = Participant.arel_table
     registrations = Registration.arel_table

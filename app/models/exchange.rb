@@ -23,7 +23,7 @@ class Exchange < ActiveRecord::Base
   end
   def finished?
     self.is_set? &&
-      self.participants.where(set: false).empty?
+      self.participants.unset.empty?
   end
   def is_set?
     self.set
@@ -50,6 +50,16 @@ class Exchange < ActiveRecord::Base
       "/join - user who type this while Exchange is started would be included in the exchange list\n"\
       "/set - locks the joined user,\n"\
       "/cancel - cancel the exchange"
+  end
+  def self.set_prompt
+    "Thank you, the exchange participants have been set!\n\n"\
+      "I will now PM each of the participants to enter some details about themselves, "\
+      "and ultimately the giftee name for the participants later."
+  end
+  def set_help_prompt
+    "Exchange status:\nSET (Gathering participants' interest)\n\n"\
+      "Sit back, relax, and keep on giving to others :)\n"\
+      "There is nothing more you could do in this group."
   end
   def started_help_prompt
     self.class.started_help_prompt +

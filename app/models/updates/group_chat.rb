@@ -22,6 +22,12 @@ module Updates
     end
     def parse_set
       parser.commands.each do |command|
+        case command
+        when '/help'
+          reply_message(exchange.set_help_prompt)
+        else
+          # TODO: improve prompt
+        end
       end
     end
     def parse_started
@@ -60,9 +66,6 @@ module Updates
     end
     def registered?
       !!registration
-    end
-    def help_prompt
-      # TODO: implement help_prompt
     end
 
     private
@@ -106,7 +109,7 @@ module Updates
       exchange.participants.with_chat_id.each do |participant|
         send_message(participant.chat_id, Participant.start_prompt)
       end
-      # TODO: improve prompt, reply to the group what should happen after setting exchanges
+      reply_message(Exchange.set_prompt)
     end
   end
 end
