@@ -6,12 +6,6 @@ class Exchange < ActiveRecord::Base
   validates :chat_title, presence: true
   validates :set, inclusion: { in: [true, false] }
   
-  def conclude
-    shuffle_hash.each do |gifter, giftee|
-      send_message(gifter.chat_id, giftee.giftee_prompt)
-    end
-    self.destroy
-  end
   def shuffle_hash
     participant_hash = self.participants.id_map
     participant_hash.keys.shuffle.each_with_index.map do |id, i|
