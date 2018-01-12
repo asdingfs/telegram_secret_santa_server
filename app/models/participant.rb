@@ -30,13 +30,23 @@ class Participant < ActiveRecord::Base
       "Hobbies, interests, wish list, or anything about his/herself:\n\n" +
       "#{(self.profile || '-')}"
   end
-  def self.not_registered_prompt(addressee=nil)
+  def self.greetings(addressee=nil)
     addressee = nil if addressee.nil? || addressee.empty?
-    greetings = ["Hi", addressee].compact.join(" ")
-    "#{greetings},\n"\
+    ["Hi", addressee].compact.join(" ")
+  end
+  def self.not_registered_prompt(*args)
+    "#{greetings(*args)},\n"\
       "please go to @GiftExchangeBot and type /register, "\
-      "so I can PM you your giftee later.\n"\
-      "You may not join any exchange until you do so"
+      "so I can PM you your giftee later.\n" +
+      action_required_prompt
+  end
+  def self.one_active_exchange_allowed_prompt(*args)
+    "#{greetings(*args)},\n"\
+      "please complete the setup for exchange in any other group first that you may have.\n"+
+      action_required_prompt
+  end
+  def self.action_required_prompt
+    "This is a necessary step and you may not join any further exchange until you do so."
   end
   def self.inactive_exchange_prompt
     "Sorry, you are currently not participating in any exchanges. " +

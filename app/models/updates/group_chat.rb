@@ -85,13 +85,18 @@ module Updates
       full_name = [message.from.first_name,
                    message.from.last_name].join(" ")
       if registered?
-        exchange.participants.
-          create!(user_id: message.from.id,
-                  user_name: full_name,
-                  set: false)
+        instance = Participant.
+          where(user_id: message.from.id).
+          first_or_initialize
+        if instance.persisted?
+          return reply_message(Participant.one_active_exchange_allowed_prompt(full_name)) unless
+            instance.exchange_id == exchange.id # PENDING: test this scenario
+        else
+          instance.update!(exchange_id: exchange.id, user_name: full_name, set: false)
+        end
         reply_message(exchange.participants_list_prompt)
       else
-        reply_message(Participant.not_registered_prompt(full_name + "tg:///user?id=#{message.from.id}"),
+        reply_message(Participant.not_registered_prompt(full_name), # PENDING: add link by tg://user?id=#{message.from.id}
                       reply_to_message_id: message.message_id)
       end
     end
