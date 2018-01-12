@@ -13,7 +13,7 @@ module Parser
     end
     def commands # remove /start@GiftExchangeBot to take only the first /start command, clean data
       raw_commands.map do |string|
-        string.split("@").first.strip
+        string.split("@").first.strip.downcase
       end
     end
     def non_commands # and remove spaces around it too

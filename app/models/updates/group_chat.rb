@@ -22,13 +22,19 @@ module Updates
     end
     def parse_set
       parser.commands.each do |command|
+        case command
+        when '/help'
+          reply_message(exchange.set_help_prompt)
+        else
+          # TODO: improve prompt
+        end
       end
     end
     def parse_started
       parser.commands.each do |command|
         case command
         when '/help'
-          # TODO: improve prompt
+          reply_message(exchange.started_help_prompt)
         when '/join'
           join_exchange
         when '/set'
@@ -56,13 +62,10 @@ module Updates
       exchange && exchange.is_set?
     end
     def started_exchange?
-      exhange && !exchange.is_set?
+      exchange && !exchange.is_set?
     end
     def registered?
       !!registration
-    end
-    def help_prompt
-      # TODO: implement help_prompt
     end
 
     private
@@ -82,15 +85,22 @@ module Updates
       reply_message(Exchange.start_prompt)
     end
     def join_exchange
+      full_name = [message.from.first_name,
+                   message.from.last_name].join(" ")
       if registered?
-        exhange.participants.
-          create!(user_id: message.from.id,
-                  user_name: [message.from.first_name,
-                              message.from.last_name].join(" "),
-                  set: false)
-        # TODO: improve prompt, that you have been successfully registered, and list of participants
+        instance = Participant.
+          where(user_id: message.from.id).
+          first_or_initialize
+        if instance.persisted?
+          return reply_message(Participant.one_active_exchange_allowed_prompt(full_name)) unless
+            instance.exchange_id == exchange.id # PENDING: test this scenario
+        else
+          instance.update!(exchange_id: exchange.id, user_name: full_name, set: false)
+        end
+        reply_message(exchange.participants_list_prompt)
       else
-        # TODO: improve prompt, to register for participants
+        reply_message(Participant.not_registered_prompt(full_name), # PENDING: add link by tg://user?id=#{message.from.id}
+                      reply_to_message_id: message.message_id)
       end
     end
     def set_exchange
@@ -99,7 +109,7 @@ module Updates
       exchange.participants.with_chat_id.each do |participant|
         send_message(participant.chat_id, Participant.start_prompt)
       end
-      # TODO: improve prompt, reply to the group what should happen after setting exchanges
+      reply_message(Exchange.set_prompt)
     end
   end
 end

@@ -39,7 +39,7 @@ module Updates
         when '/set'
           set_message
         else
-          parse_no_command
+          # TODO:
         end
       end
     end
@@ -49,7 +49,7 @@ module Updates
         when '/register'
           register_participant
         else
-          reply_message(Participant.not_registered_prompt)
+          reply_message(Participant.inactive_exchange_prompt)
         end
       end
     end
@@ -70,14 +70,19 @@ module Updates
     def set_message
       participant.update!(set: true)
       reply_message("Hurray!! " + Participant.message_set_prompt)
-      exchange.conclude if exchange.finished?
+      if exchange.finished?
+        exchange.shuffle_hash.each do |gifter, giftee|
+          send_message(gifter.chat_id, giftee.giftee_prompt)
+        end
+        exchange.destroy!
+      end
     end
     def register_participant
       registration = Registration.
         where(user_id: message.from.id).
         first_or_initialize
       registration.update!(chat_id: message.chat.id)
-      # TODO: improve prompt
+      reply_message(Participant.register_prompt)
     end
     def help_prompt
       Participant.short_help_prompt
