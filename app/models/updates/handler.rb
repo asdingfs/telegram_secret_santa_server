@@ -17,7 +17,7 @@ module Updates
           case self.update.message.chat.type
           when 'private'
             PrivateChat.register(self.update)
-          when 'group'
+          when 'group', 'supergroup'
             GroupChat.register(self.update)
           end
           Update.create!(update_id: id)
