@@ -60,6 +60,12 @@ class Participant < ActiveRecord::Base
       "I would distribute the names and their personal descriptions "\
       "after all other participants in the same exchange have set their descriptions."
   end
+  def self.message_unset_prompt
+    "Okay your message is now unset! "\
+      "Everyone involved in the exchange will have to "\
+      "set their message for the exchange to begin. "\
+      "So remember to set them again once you have edited your message"
+  end
   def self.long_help_prompt
     "Commands:\n\n"\
       "/help - display a more descriptive command list (this list of commands)\n"\

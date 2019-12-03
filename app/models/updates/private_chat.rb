@@ -38,6 +38,8 @@ module Updates
           edit_message(parser.non_commands)
         when '/set'
           set_message
+        when '/unset'
+          unset_message
         else
           # TODO:
         end
@@ -76,6 +78,10 @@ module Updates
         end
         exchange.destroy!
       end
+    end
+    def unset_message
+      participant.update!(set: false)
+      reply_message(Participant.message_unset_prompt)
     end
     def register_participant
       registration = Registration.
