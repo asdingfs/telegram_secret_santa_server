@@ -73,7 +73,7 @@ module Updates
       participant.update!(set: true)
       reply_message("Hurray!! " + Participant.message_set_prompt)
       if exchange.finished?
-        exchange.shuffle_hash.each do |gifter, giftee|
+        exchange.shuffled_participants_pair.each do |gifter, giftee|
           send_message(gifter.chat_id, giftee.giftee_prompt)
         end
         exchange.destroy!

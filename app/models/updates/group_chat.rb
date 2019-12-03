@@ -78,10 +78,9 @@ module Updates
       @registration ||= Registration.find_by_user_id(message.from.id)
     end
     def create_exchange
-      @exchange = Exchange.
-        create!(chat_id: message.chat.id,
-                chat_title: message.chat.title,
-                set: false)
+      @exchange = Exchange.where(chat_id: message.chat.id).first_or_initialize
+      @exchange.update!(chat_title: message.chat.title,
+                        set: false) unless @exchange.persisted?
       reply_message(Exchange.start_prompt)
     end
     def join_exchange
@@ -91,9 +90,11 @@ module Updates
         instance = Participant.
           where(user_id: message.from.id).
           first_or_initialize
-        if instance.persisted?
-          return reply_message(Participant.one_active_exchange_allowed_prompt(full_name)) unless
-            instance.exchange_id == exchange.id # PENDING: test this scenario
+        if instance.persisted? && instance.exchange_id != exchange.id
+          reply_message(Participant.one_active_exchange_allowed_prompt(full_name))
+          return
+        elsif instance.exchange_id == exchange.id
+          # only reply with list of participants
         else
           instance.update!(exchange_id: exchange.id, user_name: full_name, set: false)
         end
@@ -106,7 +107,7 @@ module Updates
     def set_exchange
       exchange.update!(set: true)
       # send start message to participants
-      exchange.participants.with_chat_id.each do |participant|
+      exchange.participants.each do |participant|
         send_message(participant.chat_id, Participant.start_prompt)
       end
       reply_message(Exchange.set_prompt)

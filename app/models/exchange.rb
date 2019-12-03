@@ -2,11 +2,22 @@ class Exchange < ActiveRecord::Base
   has_many :participants, -> { with_chat_id },
     dependent: :destroy, inverse_of: :exchange
 
+  # this refers to the group chat ID
   validates :chat_id, presence: true, uniqueness: true
   validates :chat_title, presence: true
   validates :set, inclusion: { in: [true, false] }
-  
-  def shuffle_hash
+
+  # return shuffled participants in nested array format
+  # ensure that there is no duplicate in gifter and giftee
+  #
+  # for example, if there are 3 participants P1, P2, and P3
+  # output is:
+  #   [
+  #     [P2, P1],
+  #     [P1, P3],
+  #     [P3, P2]
+  #   ]
+  def shuffled_participants_pair
     participant_hash = self.participants.id_map
     participant_hash.keys.shuffle.each_with_index.map do |id, i|
       next_id = participant_ids[i + 1] || participant_ids[0]
