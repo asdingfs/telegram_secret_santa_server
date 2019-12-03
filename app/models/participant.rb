@@ -8,6 +8,7 @@ class Participant < ActiveRecord::Base
   # scopes
   scope :set, -> { where(set: true) }
   scope :unset, -> { where(set: false) }
+  # this chat_id refers to their personal chat ID, to send the messages through PMs
   scope :with_chat_id, -> do
     participants = Participant.arel_table
     registrations = Registration.arel_table
