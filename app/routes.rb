@@ -16,7 +16,8 @@ namespace "/api/:token", provides: :json do
     begin
       Update.all.old.destroy_all # will clean old registered updates, since they are also removed by telegram
       handler = Updates::Handler.handle(request)
-      puts "Successfully handled Update object: #{handler.update.inspect}"
+      puts "Received request: #{handler.update.inspect}"
+      handler.process
     rescue JSON::ParserError
       status 400
       body render_error_body(400, "Update object is invalid")
