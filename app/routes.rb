@@ -25,8 +25,8 @@ namespace "/api/:token", provides: :json do
       status 422
       body render_error_body(422, "Error saving objects, due to: #{e.inspect}")
     rescue Telegram::Bot::Exceptions::ResponseError => e
-      status e.error_code
-      body render_error_body(e.error_code, "Caught Telegram Exception: #{e.to_s}")
+      status 200
+      puts "Caught Telegram Exception (#{e.error_code}): #{e.to_s}"
     end
   end
 end
