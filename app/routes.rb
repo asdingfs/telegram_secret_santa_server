@@ -14,6 +14,7 @@ namespace "/api/:token", provides: :json do
   end
   post '/update'  do
     begin
+      puts "Received request: #{request.body.inspect}"
       Update.all.old.destroy_all # will clean old registered updates, since they are also removed by telegram
       handler = Updates::Handler.handle(request)
       puts "Successfully handled Update object: #{handler.update.inspect}"
