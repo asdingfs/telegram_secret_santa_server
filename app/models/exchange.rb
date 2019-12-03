@@ -19,12 +19,11 @@ class Exchange < ActiveRecord::Base
   #   ]
   def shuffled_participants_pair
     participant_hash = self.participants.id_map
-    participant_hash.keys.shuffle.each_with_index.map do |id, i|
-      next_id = participant_ids[i + 1] || participant_ids[0]
-      [id, next_id]
-    end.map do |k, v|
-      [participant_hash[k], participant_hash[v]] # { id => #participant }
-    end.to_h
+    shuffled_ids = participant_hash.keys.shuffle
+    shuffled_ids.each_with_index.map do |id, i|
+      next_id = shuffled_ids[i + 1] || shuffled_ids[0]
+      [participant_hash[id], participant_hash[next_id]]
+    end
   end
   def finished?
     self.is_set? &&
