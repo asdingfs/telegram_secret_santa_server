@@ -9,7 +9,7 @@ configure :development do
   use Rack::CommonLogger, file
 end
 
-configure do # settings vars
+configure :production do # settings vars
   set :db_uri, URI.parse(ENV['DATABASE_URL'])
   # bot vars
   set :telegram_bot_token, ENV["TELEGRAM_BOT_TOKEN"]
