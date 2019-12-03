@@ -9,7 +9,7 @@ module Updates
     def parse
       case
       when parser.multiple_commands?;     parse_multiple_commands
-      when parser.no_command?;            parse_no_command
+      when parser.no_command?;            nil # ignore & do nothing
       else;                               parse_command
       end
     end
