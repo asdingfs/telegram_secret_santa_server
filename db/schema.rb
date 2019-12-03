@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20180111180606) do
   enable_extension "plpgsql"
 
   create_table "exchanges", force: :cascade do |t|
-    t.integer "chat_id"
+    t.bigint "chat_id"
     t.string "chat_title"
     t.boolean "set", default: false
     t.index ["chat_id"], name: "index_exchanges_on_chat_id", unique: true
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20180111180606) do
 
   create_table "participants", force: :cascade do |t|
     t.bigint "exchange_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.string "user_name"
     t.text "profile"
     t.boolean "set", default: false
@@ -33,13 +33,13 @@ ActiveRecord::Schema.define(version: 20180111180606) do
   end
 
   create_table "registrations", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "chat_id"
+    t.bigint "user_id"
+    t.bigint "chat_id"
     t.index ["user_id"], name: "index_registrations_on_user_id", unique: true
   end
 
   create_table "updates", force: :cascade do |t|
-    t.integer "update_id"
+    t.bigint "update_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
