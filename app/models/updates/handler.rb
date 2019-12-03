@@ -4,7 +4,7 @@ module Updates
     
     def self.handle(request)
       update = JSON.parse(request.body.read.to_s, object_class: OpenStruct)
-      new(update).process
+      new(update)
     end
     def initialize(update)
       @update = update
