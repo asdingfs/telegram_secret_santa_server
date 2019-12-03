@@ -37,7 +37,7 @@ module Updates
         when '/edit'
           edit_message(parser.non_commands)
         when '/set'
-          set_message
+          set_message(parser.non_commands)
         when '/unset'
           unset_message
         else
@@ -69,8 +69,11 @@ module Updates
         participant.profile
       reply_message(edited_message)
     end
-    def set_message
+    def set_message(text)
       participant.update!(set: true)
+      unless text.nil? || text.strip.empty?
+        edit_message(text)
+      end
       reply_message("Hurray!! " + Participant.message_set_prompt)
       if exchange.finished?
         exchange.shuffled_participants_pair.each do |gifter, giftee|
